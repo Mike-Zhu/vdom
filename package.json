@@ -1,0 +1,22 @@
+{
+  "name": "vdom",
+  "version": "1.0.0",
+  "description": "simple-vdom",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mike-Zhu/vdom.git"
+  },
+  "keywords": [
+    "v-dom"
+  ],
+  "author": "mike",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Mike-Zhu/vdom/issues"
+  },
+  "homepage": "https://github.com/Mike-Zhu/vdom#readme"
+}
