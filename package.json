@@ -4,7 +4,7 @@
   "description": "simple-vdom",
   "main": "index.js",
   "scripts": {
-    "start": "node webpack.dev.config",
+    "start": "webpack-dev-server",
     "test": "karma start",
     "build:lib": "babel ./src --out-dir ./lib",
     "build": "npm run build:lib",
