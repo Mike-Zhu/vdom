@@ -1,8 +1,8 @@
-var _ = {
+export default {
     type(obj) {
         return Object.prototype.toString.call(obj).replace(/\[object\s|\]/g, '')
     },
-    
+
     isArray(list) {
         return _.type(list) === 'Array'
     },
@@ -16,7 +16,7 @@ var _ = {
     },
 
     isString(list) {
-        return _.type(list) === 'String'
+        return this.type(list) === 'String'
     },
 
     each(array, fn) {
@@ -62,5 +62,3 @@ var _ = {
         }
     }
 }
-
-export default _

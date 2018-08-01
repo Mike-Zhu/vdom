@@ -5,3 +5,5 @@ coverage
 _book
 _site
 .publish
+dist
+yarn.lock

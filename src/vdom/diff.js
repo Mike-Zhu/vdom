@@ -1,5 +1,5 @@
 import _ from './util'
-import listDiff from './list-diff-m'
+import listDiff from './list-diff'
 //替换掉原来的节点，例如把上面的div换成了section
 //移动、删除、新增子节点，例如上面div的子节点，把p和ul顺序互换
 //修改了节点的属性
@@ -62,7 +62,7 @@ function diffChildren(oldChildren, newChildren, index, patches, currentPatch) {
         currentPatch.push(reorderPatch)
     }
 
-    console.log(newChildren)
+    // console.log(newChildren)
     oldChildren.forEach(function (child, i) {
         var newChild = newChildren[i]
         currentNodeIndex = (leftNode && leftNode.count)

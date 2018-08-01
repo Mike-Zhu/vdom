@@ -1,10 +1,4 @@
-interface element {
-    tagName: string,
-    props: object,
-    children?: object[]
-}
-
-function Elements(tagName, props, children): void {
+function Elements(tagName, props, children) {
     this.tagName = tagName
     this.props = props
     this.children = children

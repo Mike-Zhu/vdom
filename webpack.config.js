@@ -1,98 +1,66 @@
 const webpack = require('webpack');
 const path = require('path');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const uglify = require('uglifyjs-webpack-plugin');
+// const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const srcDir = path.join(__dirname, './src');
-const distDir = path.join(__dirname, './dist');
+// const CleanWebpackPlugin = require('clean-webpack-plugin');
+// const CopyWebpackPlugin = require('copy-webpack-plugin');
+// const srcDir = path.join(__dirname, './src');
+// const distDir = path.join(__dirname, './dist');
 
 module.exports = {
     mode: "development",
     entry: {
-        index: [
-            'webpack/hot/dev-server',
-            'webpack-dev-server/client?http://localhost:8080',
-            "./src/index.js"
-        ]
+        index: ["./src/index.js"],
     },
     output: {
-        path: path.resolve(__dirname, 'dist'),
-        // 给js css 图片等在html引入中添加前缀
-        publicPath: "../../",
-        filename: 'js/[name].min.js',
+        path: path.resolve(__dirname, './dist'),
+        filename: '[name].js',
     },
-
     devtool: 'source-map',
-
     module: {
         rules: [
             {
-                test: /\.html$/,
+                test: /\.css$/,
                 use: [
-                    {
-                        loader: "html-loader",
-                        options: { minimize: true }
-                    }
+                    { loader: "style-loader" },
+                    { loader: "css-loader" },
                 ]
             },
+            //图片 loader
             {
-                test: /\.js$/,
-                exclude: /node_modules/,
+                test: /\.(png|jpg|gif|jpeg)/,  //是匹配图片文件后缀名称
+                use: [{
+                    loader: 'url-loader', //是指定使用的loader和loader的配置参数
+                    options: {
+                        limit: 500  //是把小于500B的文件打成Base64的格式，写入JS
+                    }
+                }]
+            },
+            //babel 配置
+            {
+                test: /\.(jsx|js)$/,
                 use: {
-                    loader: "babel-loader"
-                }
-            },
-            {
-                test: /\.css$/,
-                exclude: /node_modules/,
-                use: ExtractTextPlugin.extract({
-                    fallback: "style-loader",
-                    use: {
-                        loader: 'css-loader'
-                    },
-                })
-            },
-            {
-                test: /\.(gif|jpg|png|woff|svg|eot|ttf)\??.*$/,
-                loader: 'url-loader?limit=8192&name=img/[name].[ext]'
+                    loader: 'babel-loader',
+                },
+                exclude: /node_modules/
             }
         ]
     },
-
     plugins: [
-        new CleanWebpackPlugin(['dist']),
-
-        new ExtractTextPlugin('style/[name].min.css'),
+        new uglify(),//压缩js
         new HtmlWebpackPlugin({
+            minify: {
+                removeAttributeQuetes: true,
+            },
             hash: true,
-            chunks: ['index'],
-            template: "./src/index.html",
-            filename: "index.html"
-        }),
-
-        new webpack.HotModuleReplacementPlugin(),
+            template: "./src/index.html"
+        })
     ],
     devServer: {
-        port: 8080,
-        contentBase: __dirname + '/src/',
-
-        hot: true,
-        historyApiFallback: true,
-        // It suppress error shown in console, so it has to be set to false.
-        quiet: false,
-        // It suppress everything except error, so it has to be set to false as well
-        // to see success build.
-        noInfo: false,
-        stats: {
-            // Config for minimal console.log mess.
-            assets: false,
-            colors: true,
-            version: false,
-            hash: false,
-            timings: false,
-            chunks: false,
-            chunkModules: false
-        }
+        contentBase: path.resolve(__dirname, './dist'),
+        host: 'localhost',
+        compress: true,
+        port: 8080
     }
 };
