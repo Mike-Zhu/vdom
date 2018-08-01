@@ -83,7 +83,7 @@ function makeKeyIndexAndFree(list, key) {
             free
         }
     }
-    list.forEach((item, key) => {
+    list.forEach((item) => {
         let itemKey = getItemKey(item, key)
         if (itemKey) {
             keyIndex.push(itemKey)

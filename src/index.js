@@ -1,5 +1,7 @@
 import el from './vdom/element'
 import diff from './vdom/diff'
+// var svd = require('simple-virtual-dom')
+// let {el,diff} = svd
 
 var ul = el('ul', { id: 'list' }, [
     el('li', { class: 'item', key: "1" }, ['Item 1']),

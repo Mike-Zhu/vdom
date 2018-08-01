@@ -17,7 +17,7 @@ module.exports = {
         path: path.resolve(__dirname, './dist'),
         filename: '[name].js',
     },
-    devtool: 'source-map',
+    devtool: 'inline-source-map',
     module: {
         rules: [
             {
@@ -48,7 +48,7 @@ module.exports = {
         ]
     },
     plugins: [
-        new uglify(),//压缩js
+        // new uglify(),//压缩js
         new HtmlWebpackPlugin({
             minify: {
                 removeAttributeQuetes: true,
@@ -61,6 +61,7 @@ module.exports = {
         contentBase: path.resolve(__dirname, './dist'),
         host: 'localhost',
         compress: true,
+        inline:true,
         port: 8080
     }
 };
