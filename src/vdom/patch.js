@@ -1,103 +1,73 @@
-import _ from './util'
-
-export var REPLACE = 0
-export var REORDER = 1
-export var PROPS = 2
-export var TEXT = 3
+import _, {
+    REPLACE,
+    REORDER,
+    PROPS,
+    TEXT,
+    MOVES_ADD,
+    MOVES_DELETE,
+    MOVES_REORDER
+} from './util'
+export default patch
 
 function patch(node, patches) {
-    var walker = { index: 0 }
-    dfsWalk(node, walker, patches)
+    var positionCache = {
+        index: 0
+    }
+    walkNode(node, patches, positionCache)
 }
-
-function dfsWalk(node, walker, patches) {
-    var currentPatches = patches[walker.index]
-
-    var len = node.childNodes
-        ? node.childNodes.length
-        : 0
+function walkNode(node, patches, positionCache) {
+    var patch = patches[positionCache.index]
+    var len = node.childNodes ? node.childNodes.length : 0
     for (var i = 0; i < len; i++) {
         var child = node.childNodes[i]
-        walker.index++
-        dfsWalk(child, walker, patches)
+        positionCache.index++
+        walkNode(child, patches, positionCache)
     }
-
-    if (currentPatches) {
-        applyPatches(node, currentPatches)
-    }
+    patch && setPatch(node, patch)
 }
 
-function applyPatches(node, currentPatches) {
-    _.each(currentPatches, function (currentPatch) {
-        switch (currentPatch.type) {
+function setPatch(node, patch) {
+    patch.forEach(function (singlePatch) {
+        switch (singlePatch.type) {
             case REPLACE:
-                var newNode = (typeof currentPatch.node === 'string')
-                    ? document.createTextNode(currentPatch.node)
-                    : currentPatch.node.render()
+                var newNode = _.isString(singlePatch.node) ? singlePatch.node : singlePatch.node.render()
                 node.parentNode.replaceChild(newNode, node)
                 break
             case REORDER:
-                reorderChildren(node, currentPatch.moves)
+                var childNodes = node.childNodes
+                singlePatch.moves.forEach(function (singleMove) {
+                    switch (singleMove.type) {
+                        //delete
+                        case MOVES_DELETE:
+                            node.removeChild(childNodes[singleMove.index])
+                            break
+                        //add
+                        case MOVES_ADD:
+                            var newNode = _.isString(singleMove.item) ? singleMove.item : singleMove.item.render()
+                            if (childNodes.length > singleMove.index) {
+                                node.insertBefore(newNode, childNodes[singleMove.index])
+                            } else {
+                                node.appendChild(newNode)
+                            }
+                            break
+                        //move
+                        case MOVES_REORDER:
+                            node.insertBefore(childNodes[singleMove.oldIndex], childNodes[singleMove.newIndex])
+                            break
+                    }
+                })
                 break
             case PROPS:
-                setProps(node, currentPatch.props)
-                break
-            case TEXT:
-                if (node.textContent) {
-                    node.textContent = currentPatch.content
-                } else {
-                    // fuck ie
-                    node.nodeValue = currentPatch.content
+                for (var key in singlePatch.propPatches) {
+                    node.setAttribute(key, singlePatch.propPatches[key])
                 }
                 break
+            case TEXT:
+                node.parentNode.innerHTML = singlePatch.content
+                break
             default:
-                throw new Error('Unknown patch type ' + currentPatch.type)
+                console.error('error patch type')
         }
+
     })
 }
-
-function setProps(node, props) {
-    for (var key in props) {
-        if (props[key] === void 666) {
-            node.removeAttribute(key)
-        } else {
-            var value = props[key]
-            _.setAttr(node, key, value)
-        }
-    }
-}
-
-function reorderChildren(node, moves) {
-    var staticNodeList = _.toArray(node.childNodes)
-    var maps = {}
-
-    _.each(staticNodeList, function (node) {
-        if (node.nodeType === 1) {
-            var key = node.getAttribute('key')
-            if (key) {
-                maps[key] = node
-            }
-        }
-    })
-
-    _.each(moves, function (move) {
-        var index = move.index
-        if (move.type === 0) { // remove item
-            if (staticNodeList[index] === node.childNodes[index]) { // maybe have been removed for inserting
-                node.removeChild(node.childNodes[index])
-            }
-            staticNodeList.splice(index, 1)
-        } else if (move.type === 1) { // insert item
-            var insertNode = maps[move.item.key]
-                ? maps[move.item.key].cloneNode(true) // reuse old item
-                : (typeof move.item === 'object')
-                    ? move.item.render()
-                    : document.createTextNode(move.item)
-            staticNodeList.splice(index, 0, insertNode)
-            node.insertBefore(insertNode, node.childNodes[index] || null)
-        }
-    })
-}
-
-
-export default patch

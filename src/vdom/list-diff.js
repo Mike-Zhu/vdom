@@ -1,6 +1,8 @@
-const ADD = 1
-const DELETE = 0
-const REORDER = 2
+import {
+    MOVES_ADD,
+    MOVES_DELETE,
+    MOVES_REORDER
+} from './util'
 
 export default function diff(oldList, newList, key) {
     const oldMap = makeKeyIndexAndFree(oldList, key),
@@ -10,8 +12,7 @@ export default function diff(oldList, newList, key) {
         oldKeyList = oldMap.keyIndex,
         diffList = []
 
-    let freeIndex = 0,
-        newFreeList = newMap.free
+    let newFreeList = newMap.free
 
     oldList.forEach(item => {
         let itemKey = getItemKey(item, key)
@@ -23,9 +24,10 @@ export default function diff(oldList, newList, key) {
                     : null
             )
         } else {
-            children.push(newFreeList[freeIndex++] || null)
+            children.push(newFreeList.shift() || null)
         }
     })
+
     //不变
     const oldSortList = oldKeyList.map(res => newKeyList.indexOf(res) >= 0 ? newKeyList.indexOf(res) : null)
     let i = 0,
@@ -34,7 +36,7 @@ export default function diff(oldList, newList, key) {
         if (oldSortList[i] === null) {
             diffList.push({
                 index: i - j,
-                type: DELETE//删除
+                type: MOVES_DELETE//删除
             })
             j++
         }
@@ -42,31 +44,34 @@ export default function diff(oldList, newList, key) {
     }
     let filterList = oldSortList.filter(res => res !== null)
     let k = 0
-    while (k < filterList.length) {
+    while (k < newKeyList.length) {
         let oldIndex = filterList.indexOf(k)
-        if (k !== oldIndex) {
-            let insert = filterList.splice(oldIndex, 1)[0]
-            filterList.splice(k, 0, insert)
+        if (oldIndex >= 0) {
+            if (k !== oldIndex) {
+                let insert = filterList.splice(oldIndex, 1)[0]
+                filterList.splice(k, 0, insert)
+                diffList.push({
+                    newIndex: k,
+                    oldIndex: oldIndex,
+                    type: MOVES_REORDER //换位置
+                })
+            }
+        } else {
+            filterList.splice(k, 0, k)
             diffList.push({
                 index: k,
-                itemIndex: oldIndex,
-                type: REORDER //换位置
+                item: newList[k],
+                type: MOVES_ADD //新增
             })
         }
         k++
     }
-    let l = 0,
-        newLength = newKeyList.length
-    while (filterList.length < newLength) {
-        if (filterList.indexOf(l) < 0) {
-            filterList.push(l)
-            diffList.push({
-                index: k,
-                item: newList[l],
-                type: ADD //新增
-            })
-        }
-        l++
+    while (newFreeList.length > 0) {
+        diffList.push({
+            index: children.length,
+            item: newFreeList.shift(),
+            type: MOVES_ADD //新增
+        })
     }
     return {
         children: children,

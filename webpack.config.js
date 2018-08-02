@@ -1,12 +1,7 @@
 const webpack = require('webpack');
 const path = require('path');
 const uglify = require('uglifyjs-webpack-plugin');
-// const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-// const CleanWebpackPlugin = require('clean-webpack-plugin');
-// const CopyWebpackPlugin = require('copy-webpack-plugin');
-// const srcDir = path.join(__dirname, './src');
-// const distDir = path.join(__dirname, './dist');
 
 module.exports = {
     mode: "development",

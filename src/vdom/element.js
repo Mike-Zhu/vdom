@@ -1,18 +1,10 @@
 import _ from './util'
-function Elements(tagName, props, children) {
-    this.tagName = tagName
-    this.props = props
-    this.children = children
-}
 
-export default function (tagName, props, children) {
+export default function Element(tagName, props, children) {
     if (!(this instanceof Element)) {
-        if (!_.isArray(children) && children != null) {
-            children = _.slice(arguments, 2).filter(_.truthy)
-        }
-        return new Elements(tagName, props, children)
+        return new Element(tagName, props, children)
     }
-    if (_.isArray(props)) {
+    if (Array.isArray(props)) {
         children = props
         props = {}
     }
@@ -25,8 +17,7 @@ export default function (tagName, props, children) {
         : void 666
 
     var count = 0
-
-    _.each(this.children, function (child, i) {
+    this.children.forEach((child, i) => {
         if (child instanceof Element) {
             count += child.count
         } else {
@@ -34,11 +25,10 @@ export default function (tagName, props, children) {
         }
         count++
     })
-
     this.count = count
 }
 
-Elements.prototype.render = function () {
+Element.prototype.render = function () {
     var $el = document.createElement(this.tagName)
     var props = this.props
     var children = this.children
@@ -48,7 +38,7 @@ Elements.prototype.render = function () {
         $el.setAttribute(propsName, propsValue)
     }
     children.forEach(function (child) {
-        var childEl = child instanceof Elements
+        var childEl = child instanceof Element
             ? child.render()
             : document.createTextNode(child)
         $el.appendChild(childEl)
