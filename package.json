@@ -4,7 +4,7 @@
   "description": "simple-vdom",
   "main": "index.js",
   "scripts": {
-    "start": "webpack && webpack-dev-server",
+    "start": "webpack && webpack-dev-server --open",
     "test": "karma start",
     "build": "webpack"
   },
