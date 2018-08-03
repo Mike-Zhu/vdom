@@ -10,7 +10,7 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, './dist'),
-        filename: '[name].js',
+        filename: '[hash].js',
     },
     devtool: 'inline-source-map',
     module: {
@@ -48,7 +48,7 @@ module.exports = {
             minify: {
                 removeAttributeQuetes: true,
             },
-            hash: true,
+            // hash: true,
             template: "./src/index.html"
         })
     ],

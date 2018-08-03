@@ -1,10 +1,7 @@
 import el from './vdom/element'
 import diff from './vdom/diff'
 import patch from './vdom/patch'
-var svd = require('simple-virtual-dom')
 
-
-// let { patch } = svd
 var ul = el('ul', { id: 'list' }, [
     el('li', { class: 'item', key: "1" }, ['Item 1']),
     el('li', { class: 'item', key: "2" }, ['Item 2']),
@@ -18,7 +15,7 @@ var ul2 = el('ul', { id: 'list' }, [
     el('li', { class: 'item', key: "4" }, ['Item 4'])
 ])
 
-var div1 = el('div', { id: "wrapper" }, [
+var div1 = el('div', { id: "wrapper",class:"1233" }, [
     ul,
     el('div', { class: 'test' }, ['testDiv']),
     el('span', { class: 'test' }, ['123']),
@@ -28,7 +25,7 @@ var div1 = el('div', { id: "wrapper" }, [
     ]),
 ])
 
-var div2 = el('div', { id: "wrapper2" }, [
+var div2 = el('div', { id: "wrapper2",lary:"234" }, [
     ul2,
     el('p', { class: 'test' }, ['testP']),
     el('div', { class: 'test33' }, ['testDiv2']),
@@ -47,3 +44,4 @@ console.log(diff(div1, div2))
 setTimeout(function () {
     patch(ulRoot, diff(div1, div2))
 }, 1500)
+

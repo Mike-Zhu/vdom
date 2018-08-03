@@ -102,11 +102,6 @@ function makeKeyIndexAndFree(list, key) {
     }
 }
 
-function getKey(list, key) {
-    const pureList = Array.isArray(list) ? list.map(value => value.props || {}) : []
-    return isFunction(key) ? pureList.map(key) : pureList.map(item => item[key || 'key'])
-}
-
 function getItemKey(item, key) {
     let props = item.props || {}
     return isFunction(key) ? key(props) : props[key || 'key']

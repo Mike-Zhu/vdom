@@ -16,16 +16,17 @@ export default function Element(tagName, props, children) {
         ? props.key
         : void 666
 
-    var count = 0
+    var childNodesLength = 0
     this.children.forEach((child, i) => {
         if (child instanceof Element) {
-            count += child.count
+            childNodesLength += child.childNodesLength
         } else {
             children[i] = '' + child
         }
-        count++
+        childNodesLength++
     })
-    this.count = count
+    //下属子元素的数量，包含深层子元素的数量
+    this.childNodesLength = childNodesLength
 }
 
 Element.prototype.render = function () {

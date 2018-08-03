@@ -59,7 +59,9 @@ function setPatch(node, patch) {
                 break
             case PROPS:
                 for (var key in singlePatch.propPatches) {
-                    node.setAttribute(key, singlePatch.propPatches[key])
+                    isValid(singlePatch.propPatches[key])
+                        ? node.removeAttribute(key)
+                        : node.setAttribute(key, singlePatch.propPatches[key])
                 }
                 break
             case TEXT:
@@ -70,4 +72,10 @@ function setPatch(node, patch) {
         }
 
     })
+}
+
+function isValid(data) {
+    return data === undefined
+        || data === null
+        || data === ""
 }
