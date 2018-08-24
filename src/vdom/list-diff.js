@@ -29,7 +29,11 @@ export default function diff(oldList, newList, key) {
     })
 
     //不变
-    const oldSortList = oldKeyList.map(res => newKeyList.indexOf(res) >= 0 ? newKeyList.indexOf(res) : null)
+    const oldSortList = oldKeyList.map(
+        res => newKeyList.indexOf(res) >= 0
+            ? newKeyList.indexOf(res)
+            : null
+    )
     let i = 0,
         j = 0
     while (i < oldSortList.length) {
@@ -38,6 +42,8 @@ export default function diff(oldList, newList, key) {
                 index: i - j,
                 type: MOVES_DELETE//删除
             })
+            //j 用于模仿删除的操作
+            // 因为真实的节点删除后，i需要向前移动一位
             j++
         }
         i++

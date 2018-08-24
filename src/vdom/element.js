@@ -36,7 +36,11 @@ Element.prototype.render = function () {
 
     for (var propsName in props) {
         var propsValue = props[propsName]
-        $el.setAttribute(propsName, propsValue)
+        try{
+            $el.setAttribute(propsName, propsValue)
+        }catch(e){
+            throw new Error(`${propsName} is not a valid attribute!`)
+        }
     }
     children.forEach(function (child) {
         var childEl = child instanceof Element
